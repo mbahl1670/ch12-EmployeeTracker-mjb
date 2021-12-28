@@ -10,4 +10,4 @@ const db = mysql.createConnection({
   database: 'employeeDB'
 });
 
-module.exports = employeeDB;
+module.exports = db;

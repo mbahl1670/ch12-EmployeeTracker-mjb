@@ -1,0 +1,24 @@
+{
+  "name": "ch12-employeetracker-mjb",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mbahl1670/ch12-employeeTracker-mjb.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/mbahl1670/ch12-employeeTracker-mjb/issues"
+  },
+  "homepage": "https://github.com/mbahl1670/ch12-employeeTracker-mjb#readme",
+  "dependencies": {
+    "express": "^4.17.2",
+    "inquirer": "^8.2.0"
+  }
+}

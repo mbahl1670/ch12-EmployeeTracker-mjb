@@ -113,7 +113,37 @@ function viewEmployees() {
     commandPrompt();
 };
 
-function addDepartment() {console.log("4"); commandPrompt();};
+function addDepartment() {
+        
+    inquirer.prompt({
+        type: "input",
+        name: "departmentName",
+        message: "What is the name of the new department?",
+        validate: nameInput => {
+            if (nameInput) {
+                return true;
+            } else {
+                console.log("Please enter a department name.")
+            }
+        }
+    })
+    .then(departmentInfo => {
+        const sql = `INSERT INTO department (name) VALUES (?);`;
+        const params = [departmentInfo.departmentName];
+        db.query(sql, params, (err, res) => {
+            if(err) {
+                throw err;
+            }
+            console.log(`\n\n
+****************************************************
+    Adding Department ${departmentInfo.departmentName}
+****************************************************\n`);
+            commandPrompt();
+        });
+    });
+};
+
+
 function addRole() {console.log("5"); commandPrompt();};
 function addEmployee() {console.log("6"); commandPrompt();};
 function updateEmployee() {console.log("7"); commandPrompt();};

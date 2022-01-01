@@ -2,6 +2,7 @@ const mysql = require('mysql2');
 const inquirer = require("inquirer");
 const cTable = require("console.table");
 const db = require("./db/connection");
+const res = require('express/lib/response');
 
 
 // Start server after DB connection
@@ -62,9 +63,48 @@ function commandPrompt() {
     });
 };
 
-function viewDepartments() {console.log("1"); commandPrompt();};
-function viewRoles() {console.log("2"); commandPrompt();};
-function viewEmployees() {console.log("3"); commandPrompt();};
+function viewDepartments() {
+    const sql = `SELECT name, id FROM department`;
+
+    db.query(sql, (err, res) => {
+        if(err) {
+            throw err;
+        }
+        console.log("\n\nShowing Department names & Department ID's\n");
+        console.table(res);
+    });
+
+    commandPrompt();
+};
+
+function viewRoles() {
+    const sql = "SELECT title, role.id, department.name AS department, salary FROM role JOIN department ON role.department_id = department.id;"
+
+    db.query(sql, (err, res) => {
+        if(err) {
+            throw err;
+        }
+        console.log("\n\nShowing Role Title, ID, Department and Salary\n");
+        console.table(res);
+    });
+
+    commandPrompt();
+};
+
+function viewEmployees() {
+    const sql = "SELECT emp.id, emp.first_name, emp.last_name, role.title AS job_title, role.salary AS salary, manager.first_name AS manager FROM employee AS emp LEFT JOIN employee AS manager ON manager.id = emp.manager_id JOIN role ON emp.role_id = role.id;"
+
+    db.query(sql, (err, res) => {
+        if(err) {
+            throw err;
+        }
+        console.log("\n\nShowing Employee ID, First Name, Last Name, Job Title, Salary and Manager\n");
+        console.table(res);
+    });
+
+    commandPrompt();
+};
+
 function addDepartment() {console.log("4"); commandPrompt();};
 function addRole() {console.log("5"); commandPrompt();};
 function addEmployee() {console.log("6"); commandPrompt();};

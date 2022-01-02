@@ -143,7 +143,110 @@ function addDepartment() {
     });
 };
 
+function addRole() {
 
-function addRole() {console.log("5"); commandPrompt();};
-function addEmployee() {console.log("6"); commandPrompt();};
+    inquirer.prompt([
+        {
+            type: "input",
+            name: "roleTitle",
+            message: "What is the title of the new role?",
+            validate: nameInput => {
+                if (nameInput) {
+                    return true;
+                } else {
+                    console.log("Please enter the title of the new role.")
+                }
+          a  }
+        },
+        {
+            type: "input",
+            name: "roleSalary",
+            message: "What is the salary of the new role?",
+            validate: value => {
+                if (value) {
+                    return true;
+                } else {
+                    console.log("Please enter the salary of the new role.")
+                }
+            }
+        },
+        {
+            type: "list",
+            name: "departmentID",
+            message: "What is the department of the new role?",
+            choices: [1,2,3] // I don't know how to get a list of the current departments in the database to show up as choices
+        }
+    ])
+    .then(roleInfo => {
+        const sql = `INSERT INTO role (title, salary, department_id) VALUES (?,?,?);`;
+        const params = [roleInfo.roleTitle, roleInfo.roleSalary, roleInfo.departmentID];
+        db.query(sql, params, (err, res) => {
+            if(err) {
+                throw err;
+            }
+            console.log(`\n\n
+****************************************************
+    Adding Role ${roleInfo.roleTitle}
+****************************************************\n`);
+            commandPrompt();
+        });
+    });
+};
+
+function addEmployee() {
+
+    inquirer.prompt([
+        {
+            type: "input",
+            name: "firstName",
+            message: "What is the first name of the new employee?",
+            validate: nameInput => {
+                if (nameInput) {
+                    return true;
+                } else {
+                    console.log("Please enter the first name of the new employee.")
+                }
+          a  }
+        },
+        {
+            type: "input",
+            name: "lastName",
+            message: "What is the last name of the new employee?",
+            validate: nameInput => {
+                if (nameInput) {
+                    return true;
+                } else {
+                    console.log("Please enter the last name of the new employee.")
+                }
+            }
+        },
+        {
+            type: "list",
+            name: "roleID",
+            message: "What is the title of the new employee?",
+            choices: [1,2,3,4,5,6,7] // I don't know how to get a list of the current roles in the database to show up as choices
+        },
+        {
+            type: "list",
+            name: "managerID",
+            message: "Who is the new employee's manager?",
+            choices: [1,2,3,4,5,6,7,8,9,"NULL"] // I don't know how to get a list of the current employees in the database to show up as choices
+        }
+    ])
+    .then(employeeInfo => {
+        const sql = `INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES (?,?,?,?);`;
+        const params = [employeeInfo.firstName, employeeInfo.lastName, employeeInfo.roleID, employeeInfo.managerID];
+        db.query(sql, params, (err, res) => {
+            if(err) {
+                throw err;
+            }
+            console.log(`\n\n
+****************************************************
+    Adding Employee ${employeeInfo.firstName} ${employeeInfo.lastName}
+****************************************************\n`);
+            commandPrompt();
+        });
+    });
+};
+
 function updateEmployee() {console.log("7"); commandPrompt();};

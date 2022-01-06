@@ -146,16 +146,16 @@ function addDepartment() {
 function addRole() {
 
     const roleSql = `SELECT * FROM department`;
-    const departmentChoices = [];
+    // let departmentChoices = [];
     
-    db.query(roleSql, (err, res) => {
-        if (err) {
-            throw err;
-        }
-        console.log(res);
-        departmentChoices = res.map(({ name, id }) => ({ name: name, value: id}));
-        console.log(departmentChoices);
-    });
+    // db.query(roleSql, (err, res) => {
+    //     if (err) {
+    //         throw err;
+    //     }
+    //     console.log(res);
+    //     const departmentChoices = res.map(({ name, id }) => ({name: name, value: id}));
+    //     console.log(departmentChoices);
+    // });
 
     // console.log(departmentChoices);
 

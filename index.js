@@ -145,6 +145,20 @@ function addDepartment() {
 
 function addRole() {
 
+    const roleSql = `SELECT * FROM department`;
+    const departmentChoices = [];
+    
+    db.query(roleSql, (err, res) => {
+        if (err) {
+            throw err;
+        }
+        console.log(res);
+        departmentChoices = res.map(({ name, id }) => ({ name: name, value: id}));
+        console.log(departmentChoices);
+    });
+
+    // console.log(departmentChoices);
+
     inquirer.prompt([
         {
             type: "input",
@@ -156,7 +170,7 @@ function addRole() {
                 } else {
                     console.log("Please enter the title of the new role.")
                 }
-          a  }
+            }
         },
         {
             type: "input",

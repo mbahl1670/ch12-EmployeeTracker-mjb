@@ -145,20 +145,6 @@ function addDepartment() {
 
 function addRole() {
 
-    const roleSql = `SELECT * FROM department`;
-    // let departmentChoices = [];
-    
-    // db.query(roleSql, (err, res) => {
-    //     if (err) {
-    //         throw err;
-    //     }
-    //     console.log(res);
-    //     const departmentChoices = res.map(({ name, id }) => ({name: name, value: id}));
-    //     console.log(departmentChoices);
-    // });
-
-    // console.log(departmentChoices);
-
     inquirer.prompt([
         {
             type: "input",
@@ -183,26 +169,43 @@ function addRole() {
                     console.log("Please enter the salary of the new role.")
                 }
             }
-        },
-        {
-            type: "list",
-            name: "departmentID",
-            message: "What is the department of the new role?",
-            choices: [1,2,3] // I don't know how to get a list of the current departments in the database to show up as choices
         }
     ])
-    .then(roleInfo => {
-        const sql = `INSERT INTO role (title, salary, department_id) VALUES (?,?,?);`;
-        const params = [roleInfo.roleTitle, roleInfo.roleSalary, roleInfo.departmentID];
-        db.query(sql, params, (err, res) => {
-            if(err) {
+    .then (roleInfo => {
+        const params = [roleInfo.roleTitle, roleInfo.roleSalary];
+        const roleSql = `SELECT * FROM department`;
+
+        db.query(roleSql, (err, res) => {
+            if (err) {
                 throw err;
             }
-            console.log(`\n\n
+            // console.log(res);
+            const departmentChoices = res.map(({ name, id }) => ({name: name, value: id}));
+            // console.log(departmentChoices);
+            inquirer.prompt([
+                {
+                    type: "list",
+                    name: "departmentID",
+                    message: "What is the department of the new role?",
+                    choices: departmentChoices
+                }
+            ])
+            .then(roleInfo => {
+                const sql = `INSERT INTO role (title, salary, department_id) VALUES (?,?,?);`;
+                params.push(roleInfo.departmentID);
+                
+                db.query(sql, params, (err, res) => {
+                    if(err) {
+                        throw err;
+                    }
+                    console.log(`\n\n
 ****************************************************
-    Adding Role ${roleInfo.roleTitle}
+            Adding Role ${params[0]}
 ****************************************************\n`);
-            commandPrompt();
+                    commandPrompt();
+
+                });    
+            });
         });
     });
 };
@@ -220,7 +223,7 @@ function addEmployee() {
                 } else {
                     console.log("Please enter the first name of the new employee.")
                 }
-          a  }
+            }
         },
         {
             type: "input",

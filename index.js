@@ -144,6 +144,9 @@ function addDepartment() {
 };
 
 function addRole() {
+// code for this function was developed with the help of Greg L from class.  
+// Chaining the inquirer prompts with .then statments was necessary 
+// Defining the params variable earlier in the function and adding info to it with push was borrowed from his code.
 
     inquirer.prompt([
         {
@@ -180,6 +183,7 @@ function addRole() {
                 throw err;
             }
             // console.log(res);
+            // const departmentChoices = res;
             const departmentChoices = res.map(({ name, id }) => ({name: name, value: id}));
             // console.log(departmentChoices);
             inquirer.prompt([
@@ -236,32 +240,69 @@ function addEmployee() {
                     console.log("Please enter the last name of the new employee.")
                 }
             }
-        },
-        {
-            type: "list",
-            name: "roleID",
-            message: "What is the title of the new employee?",
-            choices: [1,2,3,4,5,6,7] // I don't know how to get a list of the current roles in the database to show up as choices
-        },
-        {
-            type: "list",
-            name: "managerID",
-            message: "Who is the new employee's manager?",
-            choices: [1,2,3,4,5,6,7,8,9,"NULL"] // I don't know how to get a list of the current employees in the database to show up as choices
         }
     ])
     .then(employeeInfo => {
-        const sql = `INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES (?,?,?,?);`;
-        const params = [employeeInfo.firstName, employeeInfo.lastName, employeeInfo.roleID, employeeInfo.managerID];
-        db.query(sql, params, (err, res) => {
-            if(err) {
+        const roleSql = `SELECT * FROM role`;
+        const params = [employeeInfo.firstName, employeeInfo.lastName];
+
+        db.query(roleSql, (err, res) => {
+            if (err) {
                 throw err;
             }
-            console.log(`\n\n
+            const roleChoices = res.map(({ title, id}) => ({ name: title, value: id}));
+
+            inquirer.prompt([
+                {
+                    type: "list",
+                    name: "roleID",
+                    message: "What is the title of the new employee?",
+                    choices: roleChoices,
+                    loop: false
+                }
+            ])
+            .then(employeeInfo => {
+                const managerSql = `SELECT * FROM employee`;
+                params.push(employeeInfo.roleID);
+                
+                db.query(managerSql, (err, res) => {
+                    if (err) {
+                        throw err;
+                    }
+
+                    const managerChoices = res.map(({ first_name, last_name, id }) => ({ name: first_name + " " + last_name, value: id  }));
+                    const noManager = {
+                            name: null,
+                            value: null
+                        };
+                    managerChoices.push(noManager);
+
+                    inquirer.prompt([
+                        {
+                            type: "list",
+                            name: "managerID",
+                            message: "Who is the new employee's manager?",
+                            choices: managerChoices,
+                            loop: false
+                        }
+                    ])
+                    .then(employeeInfo => {
+                        const sql = `INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES (?,?,?,?);`;
+                        params.push(employeeInfo.managerID);
+
+                        db.query(sql, params, (err, res) => {
+                            if(err) {
+                                throw err;
+                            }
+                            console.log(`\n\n
 ****************************************************
-    Adding Employee ${employeeInfo.firstName} ${employeeInfo.lastName}
+    Adding Employee ${params[0]} ${params[1]}
 ****************************************************\n`);
-            commandPrompt();
+                            commandPrompt();
+                        });
+                    });
+                });
+            });
         });
     });
 };

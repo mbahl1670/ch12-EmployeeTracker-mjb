@@ -53,7 +53,7 @@ function commandPrompt() {
                 addEmployee();
                 break;
             case "Update an employee role":
-                updateEmployee();
+                updateEmployeeRole();
                 break;
             case "Quit/End program":
                 console.log(`Thank You!  Good Bye!`);
@@ -307,4 +307,64 @@ function addEmployee() {
     });
 };
 
-function updateEmployee() {console.log("7"); commandPrompt();};
+function updateEmployeeRole() {
+    const employeeSql = `SELECT * FROM employee`;
+
+    db.query(employeeSql, (err, res) => {
+        if(err) {
+            throw err;
+        }
+        const employeeChoices = res.map(({ first_name, last_name, id }) => ({ name: first_name + " " + last_name, value: id }));
+
+        inquirer.prompt([
+            {
+                type: 'list',
+                name: 'selectedEmployee',
+                message:  'Which employee will change roles?',
+                choices: employeeChoices,
+                loop: false
+            }
+        ])
+        .then(employeeInfo => {
+            // thinking of the order we will need to use this info, assigning the result of our employee choice to a variable, planning to add it to the parameter (params) array later
+            chosenEmployee = employeeInfo.selectedEmployee;
+            roleSql = `SELECT * FROM role`;
+
+            db.query(roleSql, (err, res) => {
+                if (err) {
+                    throw err;
+                }
+
+                const roleChoices = res.map(({ title, id }) => ({ name: title, value: id }));
+
+                inquirer.prompt([
+                    {
+                        type: 'list',
+                        name: 'selectedRole',
+                        message: "What is the employee's new role?",
+                        choices: roleChoices,
+                        loop: false
+                    }
+                ])
+                .then(roleInfo => {
+                    const params = [roleInfo.selectedRole];
+                    params.push(chosenEmployee);
+                    
+                    sql = `UPDATE employee SET role_id = ? WHERE id = ?`;
+
+                    db.query(sql, params, (err, res) => {
+                        if (err) {
+                            throw err;
+                        }   
+                        
+                        console.log(`\n\n
+****************************************************
+            Employee has been updated
+****************************************************\n`);
+                        commandPrompt();
+                    });
+                });
+            });
+        });
+    });
+};

@@ -47,8 +47,7 @@ This is a Node.js application for tracking employee information.  Including depa
 * When you update an employee's role you are promped to select an employee and what the employee's new role is and this info is updated in the database
 
 ## Walkthrough Video
-
-
+https://watch.screencastify.com/v/FGU5FhealSHyClN4aakj
 
 ## Screenshot of the Application
 ![Screenshot (45)](https://user-images.githubusercontent.com/90292697/148703718-12b00aa5-09df-45d7-a5b0-d8a20a156be1.png)

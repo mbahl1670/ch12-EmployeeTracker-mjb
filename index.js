@@ -2,7 +2,7 @@ const mysql = require('mysql2');
 const inquirer = require("inquirer");
 const cTable = require("console.table");
 const db = require("./db/connection");
-const res = require('express/lib/response');
+
 
 
 // Start server after DB connection
@@ -107,7 +107,15 @@ function viewEmployees() {
             throw err;
         }
         console.log("\n\nShowing Employee ID, First Name, Last Name, Job Title, Salary and Manager\n");
-        console.table(res);
+        const answer = res.map(function({ manager, ...rest }) {
+            if (manager == null) manager = "None";
+            return {
+            ...rest,
+            manager,
+            // …
+            };
+            });
+        console.table(answer);
     });
 
     commandPrompt();
